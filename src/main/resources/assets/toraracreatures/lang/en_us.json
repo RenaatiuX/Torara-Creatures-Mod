@@ -1,0 +1,40 @@
+{
+  "itemGroup.toraracreatures_items": "Torara Items",
+  "itemGroup.toraracreatures_blocks": "Torara Blocks",
+  "itemGroup.toraracreatures_eggs": "Torara Spawn Eggs",
+
+  "item.toraracreatures.light_gray_feather": "Light gray Feather",
+  "item.toraracreatures.gray_feather": "Gray Feather",
+  "item.toraracreatures.black_feather": "Black Feather",
+  "item.toraracreatures.orange_feather": "Orange Feather",
+  "item.toraracreatures.red_feather": "Red Feather",
+  "item.toraracreatures.yellow_feather": "Yellow Feather",
+  "item.toraracreatures.light_blue_feather": "Light Blue Feather",
+  "item.toraracreatures.blue_feather": "Blue Feather",
+  "item.toraracreatures.brown_feather": "Brown Feather",
+  "item.toraracreatures.lime_feather": "Lime Feather",
+  "item.toraracreatures.green_feather": "Green Feather",
+  "item.toraracreatures.purple_feather": "Purple Feather",
+  "item.toraracreatures.magenta_feather": "Magenta Feather",
+  "item.toraracreatures.pink_feather": "Pink Feather",
+  "item.toraracreatures.cyan_feather": "Cyan Feather",
+  "item.toraracreatures.caveasphaera": "Caveasphaera",
+
+  "item.toraracreatures.raw_goose": "Raw Goose",
+  "item.toraracreatures.cooked_goose": "Cooked Goose",
+  "item.toraracreatures.raw_parrot": "Raw Parrot",
+  "item.toraracreatures.cooked_parrot": "Cooked Parrot",
+  "item.toraracreatures.raw_ostrich": "Raw Ostrich",
+  "item.toraracreatures.cooked_ostrich": "Cooked Ostrich",
+
+  "block.toraracreatures.volcanic_rock": "Volcanic Rock",
+  "block.toraracreatures.polished_volcanic_rock": "Polished Volcanic Rock",
+  "block.toraracreatures.chiseled_volcanic_rock": "Chiseled Volcanic Rock",
+  "block.toraracreatures.stone_microfossil": "Stone Microfossil",
+  "block.toraracreatures.gravel_microfossil": "Gravel Microfossil",
+  "block.toraracreatures.stromatolite": "Stromatolite",
+
+  "block.toraracreatures.greenland_shark_spawn_egg": "Greenland Shark Spawn Egg"
+
+
+}

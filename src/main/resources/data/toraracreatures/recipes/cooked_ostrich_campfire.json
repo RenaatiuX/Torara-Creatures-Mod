@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": {
+    "item": "toraracreatures:raw_ostrich"
+  },
+  "result": "toraracreatures:cooked_ostrich",
+  "experience": 0.35,
+  "cookingtime": 600
+}

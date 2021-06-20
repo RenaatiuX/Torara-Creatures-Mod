@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "toraracreatures:raw_parrot"
+  },
+  "result": "toraracreatures:cooked_parrot",
+  "experience": 0.35,
+  "cookingtime": 200
+}

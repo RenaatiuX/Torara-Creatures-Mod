@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "toraracreatures:blocks/tribrachidium_stone_fossil"
+  }
+}

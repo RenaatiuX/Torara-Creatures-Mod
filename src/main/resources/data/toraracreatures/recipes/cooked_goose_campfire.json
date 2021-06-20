@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "ingredient": {
+    "item": "toraracreatures:raw_goose"
+  },
+  "result": "toraracreatures:cooked_goose",
+  "experience": 0.35,
+  "cookingtime": 600
+}

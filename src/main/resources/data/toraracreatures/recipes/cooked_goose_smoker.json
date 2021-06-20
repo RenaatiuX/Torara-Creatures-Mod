@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smoking",
+  "ingredient": {
+    "item": "toraracreatures:raw_goose"
+  },
+  "result": "toraracreatures:cooked_goose",
+  "experience": 0.35,
+  "cookingtime": 100
+}
