@@ -1,145 +1,185 @@
 package rena.toraracreatures.common.container;
 
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.FurnaceResultSlot;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
-import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IWorldPosCallable;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import rena.toraracreatures.common.recipe.AnalyzerRecipe;
+import net.minecraftforge.items.SlotItemHandler;
+import rena.toraracreatures.block.AnalyzerBlock;
 import rena.toraracreatures.common.tileentity.AnalyzerTileEntity;
-import rena.toraracreatures.init.ContainerInit;
-import rena.toraracreatures.init.RecipeInit;
+import rena.toraracreatures.core.init.ContainerInit;
 
-public class AnalyzerContainer extends Container {
+public class AnalyzerContainer extends Container
+{
+    private final IWorldPosCallable canInteractWithCallable;
+    private final AnalyzerTileEntity tileEntity;
 
-    private final IInventory container;
-    private final IIntArray data;
-    private final World level;
-    private final IRecipeType<AnalyzerRecipe> recipeType = RecipeInit.ANALYZER_RECIPE;
-    public final AnalyzerTileEntity tile;
-
-    public AnalyzerContainer(int windowID, PlayerInventory playerInv, AnalyzerTileEntity tileEntity, IInventory tile)
+    public AnalyzerContainer(final int windowID, final PlayerInventory playerInventory, final AnalyzerTileEntity tileEntity)
     {
         super(ContainerInit.ANALYZER_CONTAINER.get(), windowID);
-        this.container = tile;
-        this.level = playerInv.player.level;
-        this.data = tileEntity.getGrinderData();
-        this.tile = tileEntity;
 
-        this.addSlot(new Slot(tile, 0, 53, 35));
-        this.addSlot(new FurnaceResultSlot(playerInv.player, tile, 1, 116, 35));
+        this.canInteractWithCallable = IWorldPosCallable.create(tileEntity.getLevel(), tileEntity.getBlockPos());
+        this.tileEntity = tileEntity;
 
-        for(int i = 0; i < 3; ++i)
-        {
-            for(int j = 0; j < 9; ++j)
+        int playerX = 8;
+        int playerY = 84;
+        for (int i = 0; i < 9; i++)
+            this.addSlot(new Slot(playerInventory, i, playerX + i * 18, playerY + 58));
+        for (int i = 0; i < 3; i++)
+            for (int k = 0; k < 9; k++)
+                this.addSlot(new Slot(playerInventory, k + i * 9 + 9, playerX + k * 18, playerY + i * 18));
+
+        this.addSlot(new SlotItemHandler(this.tileEntity.getItemStackHandler(), AnalyzerTileEntity.SLOT_FOSSIL, 36, 42) {
+
+            @Override
+            public boolean mayPlace(@Nonnull ItemStack stack)
             {
-                this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                return super.mayPlace(stack) && tileEntity.isFossilStack(stack);
             }
-        }
+        });
 
-        for(int k = 0; k < 9; ++k)
-        {
-            this.addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
-        }
+        int resultX = 92;
+        int resultY = 23;
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                this.addSlot(new PaleontologyTaleResultSlot(playerInventory.player, this.tileEntity.getInventory(), AnalyzerTileEntity.SLOT_RESULTS[0] + j * 3 + i, resultX + i * 18, resultY + j * 18));
 
-        this.addDataSlots(this.data);
+        this.addDataSlots(this.tileEntity.getIntArray());
     }
 
-    public AnalyzerContainer(int windowID, PlayerInventory playerInv, PacketBuffer data)
+    public AnalyzerContainer(final int windowID, final PlayerInventory playerInventory, final PacketBuffer data)
     {
-        this(windowID, playerInv, new AnalyzerTileEntity(), new Inventory(2));
+        this(windowID, playerInventory, AnalyzerContainer.getTileEntity(playerInventory, data));
+    }
+
+    private static AnalyzerTileEntity getTileEntity(final PlayerInventory playerInventory, final PacketBuffer data)
+    {
+        Objects.requireNonNull(playerInventory, "Error: " + AnalyzerContainer.class.getSimpleName() + " - Player Inventory cannot be null!");
+        Objects.requireNonNull(data, "Error: " + AnalyzerContainer.class.getSimpleName() + " - Packer Buffer Data cannot be null!");
+
+        final TileEntity tileEntityAtPos = playerInventory.player.level.getBlockEntity(data.readBlockPos());
+        if (tileEntityAtPos instanceof AnalyzerTileEntity)
+            return (AnalyzerTileEntity) tileEntityAtPos;
+
+        throw new IllegalStateException("Error: " + AnalyzerContainer.class.getSimpleName() + " - TileEntity is not corrent! " + tileEntityAtPos);
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player)
+    public boolean stillValid(PlayerEntity playerIn)
     {
-        return this.container.stillValid(player);
+        return this.canInteractWithCallable.evaluate((world, blockPos) ->
+                world.getBlockState(blockPos).getBlock() instanceof AnalyzerBlock && playerIn.distanceToSqr((double) blockPos.getX() + 0.5D, (double) blockPos.getY() + 0.5D, (double) blockPos.getZ() + 0.5D) <= 64.0D, true);
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity player, int i)
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int index)
     {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(i);
-        if(slot != null && slot.hasItem())
-        {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if(i == 1)
-            {
-                if(!this.moveItemStackTo(itemstack1, 2, 38, true))
-                {
-                    return ItemStack.EMPTY;
-                }
+        int playerInvSize = this.slots.size() - this.tileEntity.getInventorySize();
 
-                slot.onQuickCraft(itemstack1, itemstack);
-            }
-            else if(i != 0)
-            {
-                if(canGrind(itemstack1))
-                {
-                    if(!this.moveItemStackTo(itemstack1, 0, 1, false))
-                    {
-                        return ItemStack.EMPTY;
-                    }
-                }
-                else if(i >= 2 && i < 29)
-                {
-                    if(!this.moveItemStackTo(itemstack1, 29, 38, false))
-                    {
-                        return ItemStack.EMPTY;
-                    }
-                }
-                else if(i >= 29 && i < 38 && !this.moveItemStackTo(itemstack1, 2, 29, false))
-                {
-                    return ItemStack.EMPTY;
-                }
-            }
-            else if(!this.moveItemStackTo(itemstack1, 2, 38, false))
-            {
+        Slot sourceSlot = this.slots.get(index);
+        if (sourceSlot == null || !sourceSlot.hasItem())
+            return ItemStack.EMPTY;
+
+        ItemStack sourceStack = sourceSlot.getItem();
+        ItemStack copyOfSourceStack = sourceStack.copy();
+
+        if (index >= playerInvSize)
+        {
+            if (!this.moveItemStackTo(sourceStack, 0, playerInvSize, false))
                 return ItemStack.EMPTY;
-            }
-
-            if(itemstack1.isEmpty())
+        }
+        else
+        {
+            if (this.tileEntity.isFossilStack(sourceStack))
             {
-                slot.set(ItemStack.EMPTY);
+                int slotIndex = AnalyzerTileEntity.SLOT_FOSSIL;
+                if (!this.moveItemStackTo(sourceStack, playerInvSize + slotIndex, playerInvSize + slotIndex + 1, false))
+                    return ItemStack.EMPTY;
             }
             else
-            {
-                slot.setChanged();
-            }
-
-            if (itemstack1.getCount() == itemstack.getCount())
-            {
                 return ItemStack.EMPTY;
-            }
-
-            slot.onTake(player, itemstack1);
         }
 
-        return itemstack;
-    }
+        if (sourceStack.isEmpty())
+            sourceSlot.set(ItemStack.EMPTY);
+        else
+            sourceSlot.setChanged();
 
-    protected boolean canGrind(ItemStack stack)
-    {
-        return this.level.getRecipeManager().getRecipeFor((IRecipeType)this.recipeType, new Inventory(stack), this.level).isPresent();
+        if (sourceStack.getCount() == copyOfSourceStack.getCount())
+            return ItemStack.EMPTY;
+
+        sourceSlot.onTake(playerIn, sourceStack);
+        return copyOfSourceStack;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public int getProgress()
+    public int getWorkProgressionScaled(int size)
     {
-        int grindingProgress = this.data.get(2);
-        int grindingTotalTime = this.data.get(3);
-        return grindingTotalTime != 0 && grindingProgress != 0 ? grindingProgress * 35 / grindingTotalTime : 0;
+        return this.tileEntity.getWorkProgressionScaled(size);
+    }
+
+    public class PaleontologyTaleResultSlot extends Slot
+    {
+        private final PlayerEntity player;
+        private int removeCount;
+
+        public PaleontologyTaleResultSlot(PlayerEntity player, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition)
+        {
+            super(inventoryIn, slotIndex, xPosition, yPosition);
+            this.player = player;
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack)
+        {
+            return false;
+        }
+
+        @Override
+        public ItemStack remove(int amount)
+        {
+            if (this.hasItem())
+            {
+                this.removeCount += Math.min(amount, this.getItem().getCount());
+            }
+
+            return super.remove(amount);
+        }
+
+        @Override
+        public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack)
+        {
+            this.checkTakeAchievements(stack);
+            super.onTake(thePlayer, stack);
+            return stack;
+        }
+
+        @Override
+        protected void onQuickCraft(ItemStack stack, int amount)
+        {
+            this.removeCount += amount;
+            this.checkTakeAchievements(stack);
+        }
+
+        @Override
+        protected void checkTakeAchievements(ItemStack stack)
+        {
+            stack.onCraftedBy(this.player.level, this.player, this.removeCount);
+            if (!this.player.level.isClientSide && this.container instanceof AnalyzerTileEntity)
+                ((AnalyzerTileEntity) this.container).givePlayerXP(player, this.removeCount);
+
+            this.removeCount = 0;
+        }
     }
 }

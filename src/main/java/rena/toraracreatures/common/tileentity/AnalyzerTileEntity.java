@@ -1,399 +1,320 @@
 package rena.toraracreatures.common.tileentity;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
+import net.minecraft.util.INameable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.RangedWrapper;
 import rena.toraracreatures.ToraraCreatures;
-import rena.toraracreatures.block.AnalyzerBlock;
 import rena.toraracreatures.common.container.AnalyzerContainer;
-import rena.toraracreatures.common.recipe.AnalyzerRecipe;
-import rena.toraracreatures.init.RecipeInit;
-import rena.toraracreatures.init.TileEntityInit;
+import rena.toraracreatures.common.recipe.RecipeAnalyzer;
+import rena.toraracreatures.core.init.TileEntityInit;
+import rena.toraracreatures.item.FossilItem;
 
-import javax.annotation.Nullable;
+public class AnalyzerTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider, INameable
+{
+    public static final float RECIPE_DEFAULT_XP = 0.7F;
+    public static final int WORK_TIME_MAX = 40;
 
-public class AnalyzerTileEntity extends TileEntity implements IInventory, INamedContainerProvider, INameable, ITickableTileEntity {
+    public static final int SLOT_FOSSIL = 0;
+    public static final int[] SLOT_RESULTS = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-    protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
+    private final LazyOptional<TileRecipeInventory> inventoryCapabilityExternal;
+    private final LazyOptional<RangedWrapper> inventoryCapabilityExternalUp;
+    private final LazyOptional<RangedWrapper> inventoryCapabilityExternalDown;
+    private final LazyOptional<RangedWrapper> inventoryCapabilityExternalSides;
+    private final TileRecipeInventory inventory;
 
-    private int onTime;
-    private int onDuration;
-    private int grindingProgress;
-    private int grindingTotalTime;
+    private int workTime = 0;
+    private RecipeAnalyzer recipe;
+    private ITextComponent customName;
 
-    protected final IIntArray grinderData = new IIntArray()
+    private final IIntArray syncVariables = new IIntArray()
     {
+
         @Override
         public int get(int index)
         {
-            switch(index)
-            {
-                case 0:
-                    return onTime;
-                case 1:
-                    return onDuration;
-                case 2:
-                    return grindingProgress;
-                case 3:
-                    return grindingTotalTime;
-                default:
-                    return 0;
-            }
+            return AnalyzerTileEntity.this.workTime;
         }
 
         @Override
         public void set(int index, int value)
         {
-            switch(index)
-            {
-                case 0:
-                    onTime = value;
-                    break;
-                case 1:
-                    onDuration = value;
-                    break;
-                case 2:
-                    grindingProgress = value;
-                    break;
-                case 3:
-                    grindingTotalTime = value;
-                    break;
-            }
+            AnalyzerTileEntity.this.workTime = value;
         }
 
         @Override
         public int getCount()
         {
-            return 4;
+            return 1;
         }
     };
 
-    private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
-    protected final IRecipeType<AnalyzerRecipe> recipeType = RecipeInit.ANALYZER_RECIPE;
-
-    private ITextComponent name;
-
     public AnalyzerTileEntity()
     {
-        super(TileEntityInit.ANALYZER_TILE_ENTITY.get());
+        super(TileEntityInit.ANALYZER.get());
+
+        this.inventory = new TileRecipeInventory(10);
+        this.inventoryCapabilityExternal = LazyOptional.of(() -> this.inventory);
+        this.inventoryCapabilityExternalUp = LazyOptional.of(() -> new RangedWrapper(this.inventory.itemStackHandler, 0, 1));
+        this.inventoryCapabilityExternalSides = LazyOptional.of(() -> new RangedWrapper(this.inventory.itemStackHandler, 0, 1));
+        this.inventoryCapabilityExternalDown = LazyOptional.of(() -> new RangedWrapper(this.inventory.itemStackHandler, 1, 10));
     }
 
-    public int getAnalyzerProgress()
+    public int getWorkTime()
     {
-        return grindingProgress;
+        return this.workTime;
     }
 
-    public int getAnalyzerTotalTime()
+    public void setWorkTime(int time)
     {
-        return this.grindingTotalTime;
+        this.workTime = time;
     }
 
-    @Override
-    public void load(BlockState state, CompoundNBT nbt)
+    public boolean isWorking()
     {
-        super.load(state, nbt);
-        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ItemStackHelper.loadAllItems(nbt, this.items);
-        this.onTime = nbt.getInt("OnTime");
-        this.grindingProgress = nbt.getInt("GrindTime");
-        this.grindingTotalTime = nbt.getInt("GrindTimeTotal");
-        this.onDuration = this.getGrindDuration();
-        if(nbt.contains("CustomName", 8))
+        return this.workTime > 0;
+    }
+
+    public IIntArray getIntArray()
+    {
+        return this.syncVariables;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int getWorkProgressionScaled(int size)
+    {
+        return size * this.syncVariables.get(0) / AnalyzerTileEntity.WORK_TIME_MAX;
+    }
+
+    public ItemStack getFossilStack()
+    {
+        return this.inventory.getItem(AnalyzerTileEntity.SLOT_FOSSIL);
+    }
+
+    public boolean isFossilStack(ItemStack itemStack)
+    {
+        return !itemStack.isEmpty() && itemStack.getItem() instanceof FossilItem;
+    }
+
+    public void updateRecipe()
+    {
+        if (!this.hasRecipe() || !this.hasInput())
         {
-            this.name = ITextComponent.Serializer.fromJson(nbt.getString("CustomName"));
+            Optional<IRecipe<IInventory>> recipe = this.getCurrentRecipe();
+            if (recipe.isPresent() && recipe.get() instanceof RecipeAnalyzer)
+                this.recipe = (RecipeAnalyzer) recipe.get();
+            else
+                this.recipe = null;
         }
     }
 
-    @Override
-    public CompoundNBT save(CompoundNBT nbt)
+    public boolean hasRecipe()
     {
-        super.save(nbt);
-        nbt.putInt("OnTime", this.onTime);
-        nbt.putInt("GrindTime", this.grindingProgress);
-        nbt.putInt("GrindTimeTotal", this.grindingTotalTime);
-        ItemStackHelper.saveAllItems(nbt, this.items);
-        return nbt;
+        return this.recipe != null;
     }
 
-    public IIntArray getGrinderData()
+    public boolean hasInput()
     {
-        return this.grinderData;
-    }
-
-    public boolean isOn()
-    {
-        return this.onTime > 0;
+        return this.recipe.matches(this.inventory, this.level);
     }
 
     @Override
     public void tick()
     {
-        boolean flag = this.isOn();
-        boolean flag1 = false;
-        if(this.isOn())
+        if (this.level != null && !this.level.isClientSide)
         {
-            --this.onTime;
-        }
+            boolean hasWorkTimeLeft = false;
 
-        if(!this.level.isClientSide)
-        {
-            if(this.level.hasNeighborSignal(this.getBlockPos()))
+            if (!this.inventory.getItem(AnalyzerTileEntity.SLOT_FOSSIL).isEmpty())
             {
-                if(this.isOn() || !this.items.get(0).isEmpty())
+                this.updateRecipe();
+
+                if (this.hasRecipe() && this.hasInput() && this.hasFreeSlot(AnalyzerTileEntity.SLOT_RESULTS))
                 {
-                    IRecipe<?> irecipe = this.level.getRecipeManager().getRecipeFor((IRecipeType<AnalyzerRecipe>)this.recipeType, this, this.level).orElse(null);
-                    if(!this.isOn() && this.canGrindWith(irecipe))
+                    hasWorkTimeLeft = true;
+                    if (this.workTime++ >= AnalyzerTileEntity.WORK_TIME_MAX)
                     {
-                        this.onTime = this.getGrindDuration();
-                        this.onDuration = this.onTime;
-                        if(this.isOn())
+                        ItemStack resultStack = this.recipe.assemble(this.inventory);
+
+                        boolean foundSameResult = false;
+                        for (int index : AnalyzerTileEntity.SLOT_RESULTS)
                         {
-                            flag1 = true;
+                            ItemStack nextResultStack = this.inventory.getItem(index);
+                            if (!nextResultStack.isEmpty() && ItemStack.isSame(resultStack, nextResultStack) && nextResultStack.getCount() + resultStack.getCount() < this.inventory.getSlotLimit(index))
+                            {
+                                nextResultStack.grow(resultStack.getCount());
+                                this.getFossilStack().shrink(1);
+                                foundSameResult = true;
+                                break;
+                            }
                         }
-                    }
 
-                    if(this.isOn() && this.canGrindWith(irecipe))
-                    {
-                        ++this.grindingProgress;
-                        if(this.grindingProgress == this.grindingTotalTime)
+                        if (!foundSameResult)
                         {
-                            this.grindingProgress = 0;
-                            this.grindingTotalTime = this.getTotalGrindTime();
-                            this.canGrind(irecipe);
-                            flag1 = true;
+                            this.inventory.setItem(this.getNextFreeSlot(AnalyzerTileEntity.SLOT_RESULTS), resultStack);
+                            this.getFossilStack().shrink(1);
                         }
-                    }
-                    else
-                    {
-                        this.grindingProgress = 0;
+
+                        this.workTime = 0;
                     }
                 }
-                else if(!this.isOn() && this.grindingProgress > 0)
-                {
-                    this.grindingProgress = MathHelper.clamp(this.grindingProgress - 2, 0, this.grindingTotalTime);
-                }
-
-                if(flag != this.isOn())
-                {
-                    flag1 = true;
-                    this.level.setBlock(this.worldPosition, this.level.getBlockState(this.worldPosition).setValue(AnalyzerBlock.ON, Boolean.valueOf(this.isOn())), 3);
-                }
             }
-        }
 
-        if(flag1)
-        {
-            this.setChanged();
+            if (!hasWorkTimeLeft)
+                this.workTime = 0;
         }
     }
 
-    protected boolean canGrindWith(@Nullable IRecipe<?> recipe)
+    public void givePlayerXP(PlayerEntity player, int totalOrbCount)
     {
-        if(!this.items.get(0).isEmpty() && recipe != null)
+        float experience = totalOrbCount * AnalyzerTileEntity.RECIPE_DEFAULT_XP;
+        if (experience < 1.0F)
         {
-            ItemStack itemstack = recipe.getResultItem();
-            if(itemstack.isEmpty())
+            int i = MathHelper.floor((float) totalOrbCount * experience);
+            if (i < MathHelper.ceil((float) totalOrbCount * experience) && Math.random() < (double) ((float) totalOrbCount * experience - (float) i))
+                ++i;
+            totalOrbCount = i;
+        }
+
+        while (totalOrbCount > 0)
+        {
+            int orbCount = ExperienceOrbEntity.getExperienceValue(totalOrbCount);
+            totalOrbCount -= orbCount;
+            player.level.addFreshEntity(new ExperienceOrbEntity(player.level, player.getX(), player.getY() + 0.5D, player.getZ() + 0.5D, orbCount));
+        }
+    }
+
+    public Optional<IRecipe<IInventory>> getCurrentRecipe()
+    {
+        return this.level.getRecipeManager().getRecipeFor(RecipeAnalyzer.RECIPE_TYPE_ANALYZER, this.inventory, this.level);
+    }
+
+    public TileRecipeInventory getInventory()
+    {
+        return this.inventory;
+    }
+
+    public ItemStackHandler getItemStackHandler()
+    {
+        return this.inventory.itemStackHandler;
+    }
+
+    public int getInventorySize()
+    {
+        return this.inventory.getContainerSize();
+    }
+
+    public int getNextFreeSlot(int[] indexes)
+    {
+        for (int index : indexes)
+            if (this.inventory.getItem(index).isEmpty())
+                return index;
+
+        return -1;
+    }
+
+    public int getNextFreeSlot()
+    {
+        for (int index = 0; index < this.inventory.getContainerSize(); index++)
+            if (this.inventory.getItem(index).isEmpty())
+                return index;
+
+        return -1;
+    }
+
+    public boolean hasFreeSlot(int[] indexes)
+    {
+        for (int index : indexes)
+            if (this.inventory.getItem(index).isEmpty())
+                return true;
+
+        return false;
+    }
+
+    public boolean hasFreeSlot()
+    {
+        for (int index = 0; index < this.inventory.getContainerSize(); index++)
+            if (this.inventory.getItem(index).isEmpty())
+                return true;
+
+        return false;
+    }
+
+    public boolean isSlotFull(int index)
+    {
+        ItemStack itemStack = this.inventory.getItem(index);
+        return itemStack.getCount() >= itemStack.getMaxStackSize() && itemStack.getCount() >= this.inventory.getSlotLimit(index);
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, @Nullable final Direction side)
+    {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        {
+            if (side == null)
+                return this.inventoryCapabilityExternal.cast();
+            switch (side)
             {
-                return false;
-            }
-            else
-            {
-                ItemStack itemstack1 = this.items.get(1);
-                if(itemstack1.isEmpty())
-                {
-                    return true;
-                }
-                else if(!itemstack1.sameItem(itemstack))
-                {
-                    return false;
-                }
-                else if(itemstack1.getCount() + itemstack.getCount() <= this.getMaxStackSize() && itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize())
-                {
-                    return true;
-                }
-                else
-                {
-                    return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize();
-                }
+                case DOWN:
+                    return this.inventoryCapabilityExternalDown.cast();
+                case UP:
+                    return this.inventoryCapabilityExternalUp.cast();
+                case NORTH:
+                case SOUTH:
+                case WEST:
+                case EAST:
+                    return this.inventoryCapabilityExternalSides.cast();
             }
         }
-        else
-        {
-            return false;
-        }
+        return super.getCapability(capability, side);
     }
 
-    private void canGrind(@Nullable IRecipe<?> recipe)
+    public void setCustomName(ITextComponent name)
     {
-        if(recipe != null && this.canGrindWith(recipe))
-        {
-            ItemStack fossil = this.items.get(0);
-            ItemStack itemstack1 = recipe.getResultItem();
-            ItemStack itemstack2 = this.items.get(1);
-            if(itemstack2.isEmpty())
-            {
-                this.items.set(1, itemstack1.copy());
-            }
-            else if(itemstack2.getItem() == itemstack1.getItem())
-            {
-                itemstack2.grow(itemstack1.getCount());
-            }
-
-            if(!this.level.isClientSide)
-            {
-                this.setRecipeUsed(recipe);
-            }
-
-            fossil.shrink(1);
-        }
-    }
-
-    protected int getTotalGrindTime()
-    {
-        return this.level.getRecipeManager().getRecipeFor((IRecipeType<AnalyzerRecipe>)this.recipeType, this, this.level).map(AnalyzerRecipe::getAnalyzerTime).orElse(300);
-    }
-
-    protected int getGrindDuration()
-    {
-        return 300;
+        this.customName = name;
     }
 
     @Override
-    public int getContainerSize()
-    {
-        return this.items.size();
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
-        for(ItemStack itemstack : this.items)
-        {
-            if(!itemstack.isEmpty())
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public ItemStack getItem(int i)
-    {
-        return this.items.get(i);
-    }
-
-    @Override
-    public ItemStack removeItem(int i1, int i2)
-    {
-        return ItemStackHelper.removeItem(this.items, i1, i2);
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int i)
-    {
-        return ItemStackHelper.takeItem(this.items, i);
-    }
-
-    @Override
-    public void setItem(int i, ItemStack stack)
-    {
-        ItemStack itemstack = this.items.get(i);
-        boolean flag = !stack.isEmpty() && stack.sameItem(itemstack) && ItemStack.tagMatches(stack, itemstack);
-        this.items.set(i, stack);
-        if(stack.getCount() > this.getMaxStackSize())
-        {
-            stack.setCount(this.getMaxStackSize());
-        }
-
-        if (i == 0 && !flag)
-        {
-            this.grindingTotalTime = this.getTotalGrindTime();
-            this.grindingProgress = 0;
-            this.setChanged();
-        }
-    }
-
-    @Override
-    public boolean stillValid(PlayerEntity player)
-    {
-        if(this.level.getBlockEntity(this.worldPosition) != this)
-        {
-            return false;
-        }
-        else
-        {
-            return player.distanceToSqr((double)this.worldPosition.getX() + 0.5D, (double)this.worldPosition.getY() + 0.5D, (double)this.worldPosition.getZ() + 0.5D) <= 64.0D;
-        }
-    }
-
-    @Override
-    public boolean canPlaceItem(int i, ItemStack stack)
-    {
-        if(i == 1)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    @Override
-    public void clearContent()
-    {
-        this.items.clear();
-    }
-
-    public void setRecipeUsed(@Nullable IRecipe<?> recipe)
-    {
-        if(recipe != null)
-        {
-            ResourceLocation resourcelocation = recipe.getId();
-            this.recipesUsed.addTo(resourcelocation, 1);
-        }
-    }
-
     @Nullable
-    public IRecipe<?> getRecipeUsed()
+    public ITextComponent getCustomName()
     {
-        return null;
-    }
-
-    public void fillStackedContents(RecipeItemHelper helper)
-    {
-        for(ItemStack itemstack : this.items)
-        {
-            helper.accountStack(itemstack);
-        }
-    }
-
-    @Override
-    public Container createMenu(int windowId, PlayerInventory playerInv, PlayerEntity player)
-    {
-        return new AnalyzerContainer(windowId, playerInv, this, this);
+        return this.customName;
     }
 
     @Override
     public ITextComponent getName()
     {
-        return ToraraCreatures.tTC("container.fossil_grinder");
+        return this.customName != null ? this.customName : this.getDefaultName();
     }
 
     @Override
@@ -402,15 +323,166 @@ public class AnalyzerTileEntity extends TileEntity implements IInventory, INamed
         return this.getName();
     }
 
-    @Override
-    @Nullable
-    public ITextComponent getCustomName()
+    private ITextComponent getDefaultName()
     {
-        return this.name;
+        return new TranslationTextComponent("container." + ToraraCreatures.MOD_ID + ".analyzer");
     }
 
-    public void setCustomName(ITextComponent text)
+    @Override
+    public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity)
     {
-        this.name = text;
+        return new AnalyzerContainer(windowID, playerInventory, this);
+    }
+
+    @Override
+    public void load(BlockState blockState, CompoundNBT compound)
+    {
+        super.load(blockState, compound);
+
+        this.inventory.read(compound);
+        this.workTime = compound.getShort("WorkTime");
+        if (compound.contains("CustomName", Constants.NBT.TAG_STRING))
+            this.customName = ITextComponent.Serializer.fromJson(compound.getString("CustomName"));
+    }
+
+    @Override
+    public CompoundNBT save(CompoundNBT compound)
+    {
+        super.save(compound);
+
+        this.inventory.write(compound);
+        compound.putShort("WorkTime", (short) this.workTime);
+        if (this.customName != null)
+            compound.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
+
+        return compound;
+    }
+
+    @Override
+    public void setRemoved()
+    {
+        super.setRemoved();
+        this.inventoryCapabilityExternal.invalidate();
+        this.inventoryCapabilityExternalUp.invalidate();
+        this.inventoryCapabilityExternalSides.invalidate();
+        this.inventoryCapabilityExternalDown.invalidate();
+    }
+
+    public class TileRecipeInventory implements IInventory
+    {
+        protected final ItemStackHandler itemStackHandler;
+
+        public TileRecipeInventory(int size)
+        {
+            this.itemStackHandler = new ItemStackHandler(size)
+            {
+
+                @Override
+                protected void onContentsChanged(int slot)
+                {
+                    super.onContentsChanged(slot);
+                    AnalyzerTileEntity.this.setChanged();
+                }
+            };
+        }
+
+        public ItemStackHandler getItemStackHandler()
+        {
+            return this.itemStackHandler;
+        }
+
+        @Override
+        public int getContainerSize()
+        {
+            return this.itemStackHandler.getSlots();
+        }
+
+        @Override
+        public ItemStack getItem(int slot)
+        {
+            return this.itemStackHandler.getStackInSlot(slot);
+        }
+
+        @Override
+        public ItemStack removeItem(int slot, int count)
+        {
+            ItemStack stack = this.itemStackHandler.getStackInSlot(slot);
+            return stack.isEmpty() ? ItemStack.EMPTY : stack.split(count);
+        }
+
+        @Override
+        public void setItem(int slot, ItemStack stack)
+        {
+            this.itemStackHandler.setStackInSlot(slot, stack);
+        }
+
+        @Override
+        public ItemStack removeItemNoUpdate(int index)
+        {
+            ItemStack itemStack = getItem(index);
+            if (itemStack.isEmpty())
+                return ItemStack.EMPTY;
+            setItem(index, ItemStack.EMPTY);
+            return itemStack;
+        }
+
+        @Override
+        public boolean isEmpty()
+        {
+            for (int i = 0; i < this.itemStackHandler.getSlots(); i++)
+            {
+                if (!this.itemStackHandler.getStackInSlot(i).isEmpty())
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean canPlaceItem(int slot, ItemStack stack)
+        {
+            return this.itemStackHandler.isItemValid(slot, stack);
+        }
+
+        @Override
+        public void clearContent()
+        {
+            for (int i = 0; i < this.itemStackHandler.getSlots(); i++)
+                this.itemStackHandler.setStackInSlot(i, ItemStack.EMPTY);
+        }
+
+        @Override
+        public int getMaxStackSize()
+        {
+            return this.itemStackHandler.getSlots();
+        }
+
+        public int getSlotLimit(int index)
+        {
+            return this.itemStackHandler.getSlotLimit(index);
+        }
+
+        @Override
+        public void setChanged()
+        {
+            AnalyzerTileEntity.this.setChanged();
+        }
+
+        @Override
+        public boolean stillValid(PlayerEntity player)
+        {
+            BlockPos pos = AnalyzerTileEntity.this.getBlockPos();
+            return player.distanceToSqr((double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D) <= 64.0D;
+        }
+
+        public void read(CompoundNBT tag)
+        {
+            this.itemStackHandler.deserializeNBT(tag.getCompound("IInventory"));
+        }
+
+        public CompoundNBT write(CompoundNBT tag)
+        {
+            tag.put("IInventory", this.itemStackHandler.serializeNBT());
+            return tag;
+        }
     }
 }

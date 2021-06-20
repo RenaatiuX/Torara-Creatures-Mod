@@ -5,7 +5,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -14,13 +13,12 @@ import rena.toraracreatures.client.gui.AnalyzerScreen;
 import rena.toraracreatures.client.render.DickinsoniaRexRender;
 import rena.toraracreatures.client.render.GreenlandSharkRender;
 import rena.toraracreatures.client.render.WallFossilRenderer;
-import rena.toraracreatures.common.container.AnalyzerContainer;
+import rena.toraracreatures.core.init.ContainerInit;
 import rena.toraracreatures.entities.mobs.DickinsoniaRexEntity;
 import rena.toraracreatures.entities.mobs.GreenlandSharkEntity;
-import rena.toraracreatures.init.ContainerInit;
-import rena.toraracreatures.init.EntityInit;
+import rena.toraracreatures.core.init.EntityInit;
 
-@Mod.EventBusSubscriber(modid = ToraraCreatures.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = ToraraCreatures.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientModEventSubscriber {
 
     @OnlyIn(Dist.CLIENT)

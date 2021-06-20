@@ -1,4 +1,4 @@
-package rena.toraracreatures.init;
+package rena.toraracreatures.core.init;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;

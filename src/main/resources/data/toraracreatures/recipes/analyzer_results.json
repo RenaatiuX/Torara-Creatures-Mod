@@ -1,0 +1,34 @@
+{
+  "type": "toraracreatures:recipe_analyzer",
+  "group": "toraracreatures",
+  "input": {
+    "item": "toraracreatures:fossil"
+  },
+  "results": [
+    {
+      "item": "toraracreatures:black_feather",
+      "count": 1,
+      "weight": 10.0
+    },
+    {
+      "item": "toraracreatures:blue_feather",
+      "count": 1,
+      "weight": 7.5
+    },
+    {
+      "item": "minecraft:sand",
+      "count": 1,
+      "weight": 7.5
+    },
+    {
+      "item": "minecraft:dirt",
+      "count": 1,
+      "weight": 7.5
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "count": 1,
+      "weight": 5.0
+    }
+  ]
+}

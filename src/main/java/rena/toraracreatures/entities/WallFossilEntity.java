@@ -3,7 +3,6 @@ package rena.toraracreatures.entities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.HangingEntity;
-import net.minecraft.entity.item.PaintingType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -17,8 +16,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
-import rena.toraracreatures.init.EntityInit;
-import rena.toraracreatures.init.ItemInit;
+import rena.toraracreatures.core.init.EntityInit;
+import rena.toraracreatures.core.init.ItemInit;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

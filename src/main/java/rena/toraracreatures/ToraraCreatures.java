@@ -11,7 +11,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import rena.toraracreatures.init.*;
+import rena.toraracreatures.core.init.*;
 import software.bernie.geckolib3.GeckoLib;
 
 
@@ -45,9 +45,9 @@ public class ToraraCreatures {
 
         ItemInit.ITEMS.register(modEventBus);
         BlockInit.BLOCKS.register(modEventBus);
-        TileEntityInit.TILE_ENTITY.register(modEventBus);
         ContainerInit.CONTAINER.register(modEventBus);
-        RecipeInit.RECIPE.register(modEventBus);
+        RecipeInit.RECIPES.register(modEventBus);
+        TileEntityInit.TILE_ENTITY_TYPES.register(modEventBus);
         EntityInit.register();
 
         GeckoLib.initialize();

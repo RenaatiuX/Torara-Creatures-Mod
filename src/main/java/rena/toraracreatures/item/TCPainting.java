@@ -1,9 +1,6 @@
 package rena.toraracreatures.item;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.HangingEntity;
-import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.entity.item.PaintingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,7 +11,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import rena.toraracreatures.entities.WallFossilEntity;
-import rena.toraracreatures.init.EntityInit;
 
 public class TCPainting extends Item {
 

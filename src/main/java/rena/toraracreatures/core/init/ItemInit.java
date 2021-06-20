@@ -1,18 +1,15 @@
-package rena.toraracreatures.init;
+package rena.toraracreatures.core.init;
 
-import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import rena.toraracreatures.ToraraCreatures;
-import rena.toraracreatures.block.AnalyzerBlock;
+import rena.toraracreatures.item.FossilItem;
 import rena.toraracreatures.item.ModSpawnEggItem;
 import rena.toraracreatures.item.TCPainting;
 
@@ -112,5 +109,8 @@ public class ItemInit {
     public static final RegistryObject<Item> ANALYZER = ITEMS.register("analyzer",
             ()-> new BlockItem(BlockInit.ANALYZER.get(), new Item.Properties().tab(ToraraCreatures.ITEM_GROUP)));
 
+    //Fossil
+    public static final RegistryObject<Item> FOSSIL = ITEMS.register("fossil",
+            () -> new FossilItem(new Item.Properties().tab(ToraraCreatures.ITEM_GROUP)));
 
 }
