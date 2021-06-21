@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "toraracreatures:blocks/top",
+    "front": "toraracreatures:blocks/front_on",
+    "side": "toraracreatures:blocks/side"
+  }
+}

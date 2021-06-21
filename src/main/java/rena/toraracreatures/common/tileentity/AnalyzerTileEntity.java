@@ -41,7 +41,7 @@ import rena.toraracreatures.item.FossilItem;
 public class AnalyzerTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider, INameable
 {
     public static final float RECIPE_DEFAULT_XP = 0.7F;
-    public static final int WORK_TIME_MAX = 40;
+    public static final int WORK_TIME_MAX = 300;
 
     public static final int SLOT_FOSSIL = 0;
     public static final int[] SLOT_RESULTS = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };

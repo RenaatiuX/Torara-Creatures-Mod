@@ -10,6 +10,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -21,16 +22,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import rena.toraracreatures.common.tileentity.AnalyzerTileEntity;
 import rena.toraracreatures.core.init.TileEntityInit;
+import rena.toraracreatures.core.util.ModBlockStateProperties;
 
 public class AnalyzerBlock extends Block {
 
     public AnalyzerBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ON, Boolean.FALSE));
     }
 
     public static final DirectionProperty FACING = HorizontalBlock.FACING;
-
+    public static final BooleanProperty ON = ModBlockStateProperties.ON;
 
     @Override
     public boolean hasTileEntity(BlockState state) {
@@ -44,7 +46,7 @@ public class AnalyzerBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, ON);
     }
 
     @Override
