@@ -1,4 +1,4 @@
-/*package rena.toraracreatures.entities.ia;
+package rena.toraracreatures.entities.ia;
 
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.goal.RandomWalkingGoal;
@@ -30,19 +30,19 @@ public class BottomFeederAIWander extends RandomWalkingGoal {
         this.range = range;
     }
 
-    public boolean shouldExecute(){
-        if(mob instanceof ISemiAquatic && ((ISemiAquatic) mob).shouldStopMoving()){
+    public boolean canUse(){
+        if(this.mob instanceof ISemiAquatic && ((ISemiAquatic) this.mob).shouldStopMoving()){
             return false;
         }
-        interval = mob.isInWater() ? waterChance : landChance;
-        return shouldExecute();
+        this.interval = this.mob.isInWater() ? waterChance : landChance;
+        return super.canUse();
     }
 
-    public boolean shouldContinueExecuting() {
-        if(mob instanceof ISemiAquatic && ((ISemiAquatic) mob).shouldStopMoving()){
+    public boolean canContinueToUse() {
+        if(this.mob instanceof ISemiAquatic && ((ISemiAquatic) this.mob).shouldStopMoving()){
             return false;
         }
-        return shouldContinueExecuting();
+        return super.canContinueToUse();
     }
 
     @Nullable
@@ -51,7 +51,7 @@ public class BottomFeederAIWander extends RandomWalkingGoal {
             BlockPos blockpos = null;
             Random random = new Random();
             for (int i = 0; i < 15; i++) {
-                BlockPos blockpos1 = this.mob.getPosition().add(random.nextInt(range) - range / 2, 3, random.nextInt(range) - range / 2);
+                BlockPos blockpos1 = this.mob.blockPosition().offset(random.nextInt(range) - range / 2, 3, random.nextInt(range) - range / 2);
                 while ((this.mob.level.isEmptyBlock(blockpos1) || this.mob.level.getFluidState(blockpos1).is(FluidTags.WATER)) && blockpos1.getY() > 1) {
                     blockpos1 = blockpos1.below();
                 }
@@ -71,5 +71,3 @@ public class BottomFeederAIWander extends RandomWalkingGoal {
         return world.getFluidState(pos).is(FluidTags.WATER) && world.getFluidState(pos.below()).isEmpty() && world.getBlockState(pos.below()).canOcclude();
     }
 }
-
-*/

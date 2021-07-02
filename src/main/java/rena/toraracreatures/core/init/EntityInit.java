@@ -3,12 +3,15 @@ package rena.toraracreatures.core.init;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import rena.toraracreatures.ToraraCreatures;
 import rena.toraracreatures.entities.WallFossilEntity;
 import rena.toraracreatures.entities.mobs.DickinsoniaRexEntity;
 import rena.toraracreatures.entities.mobs.GreenlandSharkEntity;
+
+import java.util.Random;
 
 public class EntityInit {
 
@@ -34,5 +37,13 @@ public class EntityInit {
     private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder) {
         ResourceLocation regName = new ResourceLocation(ToraraCreatures.MOD_ID, name);
         return (EntityType<T>) builder.build(name).setRegistryName(regName);
+    }
+
+    public static boolean rollSpawn(int rolls, Random random, SpawnReason reason){
+        if(reason == SpawnReason.SPAWNER){
+            return true;
+        }else{
+            return rolls <= 0 || random.nextInt(rolls) == 0;
+        }
     }
 }

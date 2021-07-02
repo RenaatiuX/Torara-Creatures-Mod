@@ -53,7 +53,7 @@ public class AnalyzerContainer extends Container
         int resultY = 23;
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
-                this.addSlot(new PaleontologyTaleResultSlot(playerInventory.player, this.tileEntity.getInventory(), AnalyzerTileEntity.SLOT_RESULTS[0] + j * 3 + i, resultX + i * 18, resultY + j * 18));
+                this.addSlot(new AnalyzerResultSlot(playerInventory.player, this.tileEntity.getInventory(), AnalyzerTileEntity.SLOT_RESULTS[0] + j * 3 + i, resultX + i * 18, resultY + j * 18));
 
         this.addDataSlots(this.tileEntity.getIntArray());
     }
@@ -129,12 +129,12 @@ public class AnalyzerContainer extends Container
         return this.tileEntity.getWorkProgressionScaled(size);
     }
 
-    public class PaleontologyTaleResultSlot extends Slot
+    public class AnalyzerResultSlot extends Slot
     {
         private final PlayerEntity player;
         private int removeCount;
 
-        public PaleontologyTaleResultSlot(PlayerEntity player, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition)
+        public AnalyzerResultSlot(PlayerEntity player, IInventory inventoryIn, int slotIndex, int xPosition, int yPosition)
         {
             super(inventoryIn, slotIndex, xPosition, yPosition);
             this.player = player;
@@ -182,4 +182,5 @@ public class AnalyzerContainer extends Container
             this.removeCount = 0;
         }
     }
+
 }

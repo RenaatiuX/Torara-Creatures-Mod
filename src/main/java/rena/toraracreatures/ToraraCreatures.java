@@ -4,14 +4,23 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import rena.toraracreatures.client.ClientModEventSubscriber;
+import rena.toraracreatures.config.ConfigHolder;
+import rena.toraracreatures.config.ToraraConfig;
 import rena.toraracreatures.core.init.*;
+import rena.toraracreatures.entities.ToraraSpawnPlacement;
+import rena.toraracreatures.event.EntityEvent;
 import software.bernie.geckolib3.GeckoLib;
 
 
@@ -42,7 +51,10 @@ public class ToraraCreatures {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLoadingContext context = ModLoadingContext.get();
         modEventBus.addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onModConfigEvent);
+        MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoadFromJSON);
 
+        context.registerConfig(ModConfig.Type.COMMON, ConfigHolder.COMMON_SPEC, "toraracreatures.toml");
         ItemInit.ITEMS.register(modEventBus);
         BlockInit.BLOCKS.register(modEventBus);
         ContainerInit.CONTAINER.register(modEventBus);
@@ -54,9 +66,7 @@ public class ToraraCreatures {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> {
-
-        });
+            ToraraSpawnPlacement.spawnPlacement();
     }
 
     public static final ItemGroup ITEM_GROUP = new ItemGroup("toraracreatures_items") {
@@ -80,5 +90,17 @@ public class ToraraCreatures {
         }
     };
 
+    @SubscribeEvent
+    public void onModConfigEvent(final ModConfig.ModConfigEvent event) {
+        final ModConfig config = event.getConfig();
 
+        if (config.getSpec() == ConfigHolder.COMMON_SPEC) {
+            ToraraConfig.bake(config);
+        }
+    }
+
+    @SubscribeEvent
+    public void onBiomeLoadFromJSON(BiomeLoadingEvent event) {
+        EntityEvent.onBiomesLoad(event);
+    }
 }
