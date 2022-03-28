@@ -14,9 +14,8 @@ public class EntityEvent {
         if (event.getName() == null)
             return;
         MobSpawnInfoBuilder spawns = event.getSpawns();
-        if (event.getCategory() == Biome.Category.OCEAN && event.getCategory() == Biome.Category.BEACH && ToraraConfig.dickinsoniaSpawnWeight > 0) {
-            spawns.getSpawner(EntityClassification.WATER_AMBIENT).add(new MobSpawnInfo.Spawners(EntityInit.DICKINSONIA_REX, ToraraConfig.dickinsoniaSpawnWeight, 3, 5));
+        if (event.getCategory().equals(Biome.Category.OCEAN) && ToraraConfig.dickinsoniaSpawnWeight > 0) {
+            spawns.getSpawner(EntityClassification.WATER_CREATURE).add(new MobSpawnInfo.Spawners(EntityInit.DICKINSONIA_REX, ToraraConfig.dickinsoniaSpawnWeight, 3, 5));
         }
     }
-
 }

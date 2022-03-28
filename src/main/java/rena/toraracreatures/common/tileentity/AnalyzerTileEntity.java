@@ -33,7 +33,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RangedWrapper;
 import rena.toraracreatures.ToraraCreatures;
-import rena.toraracreatures.block.AnalyzerBlock;
 import rena.toraracreatures.common.container.AnalyzerContainer;
 import rena.toraracreatures.common.recipe.RecipeAnalyzer;
 import rena.toraracreatures.core.init.TileEntityInit;

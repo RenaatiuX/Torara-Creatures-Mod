@@ -2,33 +2,43 @@
   "type": "toraracreatures:recipe_analyzer",
   "group": "toraracreatures",
   "input": {
-    "item": "toraracreatures:fossil"
+    "item": "toraracreatures:ediacaran_fossil"
   },
   "results": [
     {
-      "item": "toraracreatures:black_feather",
+      "item": "toraracreatures:ediacaran_dna",
       "count": 1,
       "weight": 10.0
     },
     {
-      "item": "toraracreatures:blue_feather",
+      "item": "minecraft:stone",
       "count": 1,
-      "weight": 7.5
+      "weight": 15.0
     },
     {
-      "item": "minecraft:sand",
-      "count": 1,
-      "weight": 7.5
-    },
-    {
-      "item": "minecraft:dirt",
-      "count": 1,
-      "weight": 7.5
-    },
-    {
-      "item": "minecraft:bone_meal",
+      "item": "minecraft:coal",
       "count": 1,
       "weight": 5.0
+    },
+    {
+      "item": "minecraft:diamond_ore",
+      "count": 1,
+      "weight": 0.1
+    },
+    {
+      "item": "minecraft:gravel",
+      "count": 1,
+      "weight": 10.0
+    },
+    {
+      "item": "minecraft:iron_ore",
+      "count": 1,
+      "weight": 1.0
+    },
+    {
+      "item": "minecraft:gold_ore",
+      "count": 1,
+      "weight": 0.5
     }
   ]
 }

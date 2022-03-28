@@ -2,9 +2,14 @@ package rena.toraracreatures;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.template.TagMatchRuleTest;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,7 +25,9 @@ import rena.toraracreatures.config.ConfigHolder;
 import rena.toraracreatures.config.ToraraConfig;
 import rena.toraracreatures.core.init.*;
 import rena.toraracreatures.entities.ToraraSpawnPlacement;
+import rena.toraracreatures.entities.mobs.*;
 import rena.toraracreatures.event.EntityEvent;
+import rena.toraracreatures.world.features.TCFeatures;
 import software.bernie.geckolib3.GeckoLib;
 
 
@@ -102,5 +109,23 @@ public class ToraraCreatures {
     @SubscribeEvent
     public void onBiomeLoadFromJSON(BiomeLoadingEvent event) {
         EntityEvent.onBiomesLoad(event);
+    }
+
+    @SubscribeEvent
+    public static void entityAttributes(EntityAttributeCreationEvent event){
+        event.put(EntityInit.GREENLAND_SHARK, GreenlandSharkEntity.createAttributes().build());
+        event.put(EntityInit.DICKINSONIA_REX, DickinsoniaRexEntity.createAttributes().build());
+        event.put(EntityInit.AGUJACERATOPS, AgujaceratopsEntity.createAttributes().build());
+        event.put(EntityInit.LAMPREY, LampreyEntity.createAttributes().build());
+        event.put(EntityInit.MANATEE, ManateeEntity.createAttributes().build());
+        event.put(EntityInit.CARACAL, CaracalEntity.createAttributes().build());
+    }
+
+    @SubscribeEvent
+    public static void registerFeatures(RegistryEvent.Register<Feature<?>> event) {
+        ToraraCreatures.LOGGER.debug("ToraraCreatures: Registering features...");
+        TCFeatures.init();
+        TCFeatures.features.forEach(feature -> event.getRegistry().register(feature));
+        ToraraCreatures.LOGGER.info("ToraraCreatures: Features registered!");
     }
 }

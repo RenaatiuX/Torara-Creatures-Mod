@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "toraracreatures:blocks/death_cap_dirt_stem"
+  }
+}

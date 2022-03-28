@@ -1,0 +1,127 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 256,
+				"texture_height": 256,
+				"visible_bounds_width": 8,
+				"visible_bounds_height": 4.5,
+				"visible_bounds_offset": [0, 1.75, 0]
+			},
+			"bones": [
+				{
+					"name": "Agujaceratops",
+					"pivot": [0, 4, -21]
+				},
+				{
+					"name": "Torso",
+					"parent": "Agujaceratops",
+					"pivot": [0, 34, 9],
+					"cubes": [
+						{"origin": [-8, 13, -17], "size": [16, 22, 34], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "Neck",
+					"parent": "Torso",
+					"pivot": [0, 33, -19],
+					"cubes": [
+						{"origin": [-4.9, 20, -27], "size": [9.8, 13, 11], "uv": [90, 45]}
+					]
+				},
+				{
+					"name": "Head",
+					"parent": "Neck",
+					"pivot": [0, 33, -26],
+					"rotation": [10, 0, 0],
+					"cubes": [
+						{"origin": [-2.6, 23.63534, -45.0319], "size": [5.2, 7, 2], "uv": [54, 56]},
+						{"origin": [-2.6, 24.63534, -43.0319], "size": [5.2, 6, 9], "uv": [3, 116]},
+						{"origin": [-0.5, 31.6119, -43.46983], "size": [1, 2, 3], "pivot": [2.5, 31, -44], "rotation": [-42.5, 0, 0], "uv": [24, 24]},
+						{"origin": [-5, 20, -35], "size": [10, 13, 9], "uv": [75, 106]},
+						{"origin": [-10.5, 25.09514, -31.1791], "size": [21, 22, 5], "pivot": [2.5, 29, -29], "rotation": [-15, 0, 0], "uv": [66, 0]},
+						{"origin": [-13.5, 25.09514, -29.1791], "size": [27, 27, 0], "pivot": [2.5, 29, -29], "rotation": [-15, 0, 0], "uv": [0, 56]},
+						{"origin": [-3.2, 29, -37], "size": [2, 16, 3], "pivot": [-1, 33, -37], "rotation": [20, 0, -12.5], "uv": [60, 113]},
+						{"origin": [1.2, 29, -37], "size": [2, 16, 3], "pivot": [1, 33, -37], "rotation": [20, 0, 12.5], "uv": [24, 0]}
+					]
+				},
+				{
+					"name": "Jaw",
+					"parent": "Head",
+					"pivot": [0, 25, -33],
+					"cubes": [
+						{"origin": [-2.5, 21.79896, -44.91154], "size": [5, 4, 13], "uv": [101, 28]}
+					]
+				},
+				{
+					"name": "FRArm",
+					"parent": "Torso",
+					"pivot": [-7, 23, -11],
+					"cubes": [
+						{"origin": [-11, 0, -14], "size": [6, 23, 6], "uv": [110, 69]}
+					]
+				},
+				{
+					"name": "FLArm",
+					"parent": "Torso",
+					"pivot": [9, 23, -11],
+					"cubes": [
+						{"origin": [5, 0, -14], "size": [6, 23, 6], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "Tail1",
+					"parent": "Torso",
+					"pivot": [0, 33, 17],
+					"rotation": [-10, 0, 0],
+					"cubes": [
+						{"origin": [-5, 22, 17], "size": [10, 11, 16], "uv": [54, 56]},
+						{"origin": [-3, 32.83289, 15.08987], "size": [6, 11, 16], "uv": [0, 134]}
+					]
+				},
+				{
+					"name": "Tail2",
+					"parent": "Tail1",
+					"pivot": [0, 33, 33],
+					"cubes": [
+						{"origin": [-2.5, 27, 33], "size": [5, 6, 16], "uv": [84, 84]}
+					]
+				},
+				{
+					"name": "BRThigh",
+					"parent": "Agujaceratops",
+					"pivot": [-8, 27, 6],
+					"cubes": [
+						{"origin": [-12, 12, 1], "size": [8, 17, 13], "uv": [42, 83]}
+					]
+				},
+				{
+					"name": "BRLeg",
+					"parent": "BRThigh",
+					"pivot": [-8, 12, 9],
+					"cubes": [
+						{"origin": [-11, 0, 8], "size": [6, 13, 7], "uv": [113, 113]}
+					]
+				},
+				{
+					"name": "BLThigh",
+					"parent": "Agujaceratops",
+					"pivot": [8, 27, 6],
+					"cubes": [
+						{"origin": [4, 12, 1], "size": [8, 17, 13], "uv": [0, 83]}
+					]
+				},
+				{
+					"name": "BLLeg",
+					"parent": "BLThigh",
+					"pivot": [8, 12, 9],
+					"cubes": [
+						{"origin": [5, 0, 8], "size": [6, 13, 7], "uv": [34, 113]}
+					]
+				}
+			]
+		}
+	]
+}

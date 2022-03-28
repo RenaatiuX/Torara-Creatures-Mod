@@ -1,0 +1,78 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 7,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "Manatee",
+					"pivot": [0, 18, 1]
+				},
+				{
+					"name": "Body",
+					"parent": "Manatee",
+					"pivot": [0, 20, 8],
+					"cubes": [
+						{"origin": [-10, 6, -14], "size": [20, 16, 29], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "Head",
+					"parent": "Body",
+					"pivot": [0, 21, -14],
+					"cubes": [
+						{"origin": [-5.5, 12, -23], "size": [11, 9, 9], "uv": [0, 67]}
+					]
+				},
+				{
+					"name": "Head2",
+					"parent": "Head",
+					"pivot": [0, 17, -19],
+					"rotation": [7.5, 0, 0],
+					"cubes": [
+						{"origin": [-3.5, 9, -26], "size": [7, 7, 7], "uv": [69, 0]}
+					]
+				},
+				{
+					"name": "RightFin",
+					"parent": "Body",
+					"pivot": [10, 10, -8],
+					"cubes": [
+						{"origin": [10, -2, -12], "size": [2, 12, 9], "uv": [40, 68]}
+					]
+				},
+				{
+					"name": "LeftFin",
+					"parent": "Body",
+					"pivot": [-10, 10, -8],
+					"cubes": [
+						{"origin": [-12, -2, -12], "size": [2, 12, 9], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "Tail",
+					"parent": "Body",
+					"pivot": [0, 21, 15],
+					"cubes": [
+						{"origin": [-5, 11, 15], "size": [10, 10, 14], "uv": [54, 53]}
+					]
+				},
+				{
+					"name": "Tail2",
+					"parent": "Tail",
+					"pivot": [0, 17, 23],
+					"cubes": [
+						{"origin": [-8, 15, 23], "size": [16, 4, 18], "uv": [0, 45]}
+					]
+				}
+			]
+		}
+	]
+}

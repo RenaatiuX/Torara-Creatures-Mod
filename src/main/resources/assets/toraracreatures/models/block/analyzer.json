@@ -1,8 +1,52 @@
 {
-  "parent": "minecraft:block/orientable",
   "textures": {
-    "top": "toraracreatures:blocks/top",
-    "front": "toraracreatures:blocks/front",
-    "side": "toraracreatures:blocks/side"
+    "0": "toraracreatures:blocks/analyzer",
+    "particle": "toraracreatures:blocks/analyzer"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": {"uv": [4, 4, 8, 8], "texture": "#0"},
+        "east": {"uv": [0, 4, 4, 8], "texture": "#0"},
+        "south": {"uv": [12, 4, 16, 8], "texture": "#0"},
+        "west": {"uv": [8, 4, 12, 8], "texture": "#0"},
+        "up": {"uv": [8, 4, 4, 0], "texture": "#0"},
+        "down": {"uv": [12, 0, 8, 4], "texture": "#0"}
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [40, 0, 0],
+      "scale": [0.27, 0.27, 0.27]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [40, 0, 0],
+      "scale": [0.27, 0.27, 0.27]
+    },
+    "firstperson_righthand": {
+      "rotation": [-29, 0, 0],
+      "translation": [2.25, 0.25, 0],
+      "scale": [0.26, 0.26, 0.26]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-29, 0, 0],
+      "translation": [2.25, 0.25, 0],
+      "scale": [0.26, 0.26, 0.26]
+    },
+    "ground": {
+      "translation": [0, -1, 0],
+      "scale": [0.3, 0.3, 0.3]
+    },
+    "gui": {
+      "rotation": [23, 143, 0],
+      "scale": [0.6, 0.6, 0.6]
+    },
+    "fixed": {
+      "translation": [0, 0, 5],
+      "scale": [0.8, 0.8, 0.8]
+    }
   }
 }

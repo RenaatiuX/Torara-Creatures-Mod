@@ -10,8 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.pathfinding.GroundPathNavigator;
-import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -19,9 +18,7 @@ import net.minecraft.tags.ITag;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import net.minecraft.world.server.ServerWorld;
 import rena.toraracreatures.config.ToraraConfig;
 import rena.toraracreatures.entities.ISemiAquatic;
@@ -30,7 +27,6 @@ import rena.toraracreatures.entities.ToraraTagRegistry;
 import rena.toraracreatures.entities.ia.AnimalAIFindWater;
 import rena.toraracreatures.entities.ia.AnimalAILeaveWater;
 import rena.toraracreatures.entities.ia.BottomFeederAIWander;
-import rena.toraracreatures.entities.ia.SemiAquaticPathNavigator;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -47,7 +43,7 @@ public class DickinsoniaRexEntity extends AnimalEntity implements IAnimatable, I
 
     private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.SAND);
 
-    @Override
+
     public boolean isFood(ItemStack stack) {
         return FOOD_ITEMS.test(stack);
     }
@@ -55,10 +51,18 @@ public class DickinsoniaRexEntity extends AnimalEntity implements IAnimatable, I
     private AnimationFactory factory = new AnimationFactory(this);
 
 
-    public DickinsoniaRexEntity(EntityType type, World worldIn) {
+    public DickinsoniaRexEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
         super(type, worldIn);
         this.setPathfindingMalus(PathNodeType.WATER, 0.0F);
         this.setPathfindingMalus(PathNodeType.WATER_BORDER, 0.0F);
+    }
+
+    public int getMaxSpawnClusterSize() {
+        return 7;
+    }
+
+    public boolean isMaxGroupSizeReached(int sizeIn) {
+        return false;
     }
 
     public boolean checkSpawnObstruction(IWorldReader worldIn) {
@@ -71,7 +75,7 @@ public class DickinsoniaRexEntity extends AnimalEntity implements IAnimatable, I
         this.goalSelector.addGoal(1, new AnimalAILeaveWater(this));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(3, new BottomFeederAIWander(this, 1.0D, 10, 50));
-        //this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, FOOD_ITEMS, false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.25D, FOOD_ITEMS, false));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
@@ -175,7 +179,14 @@ public class DickinsoniaRexEntity extends AnimalEntity implements IAnimatable, I
         this.handleAirSupply(i);
     }
 
-    @Override
+
+    @Nullable
+    public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+       /* System.out.println("spawn" + this.position ());*/
+        return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+    }
+
+    /*@Override
     protected PathNavigator createNavigation(World worldIn) {
         SemiAquaticPathNavigator flyingpathnavigator = new SemiAquaticPathNavigator(this, worldIn) {
             public boolean isStableDestination(BlockPos pos) {
@@ -183,7 +194,7 @@ public class DickinsoniaRexEntity extends AnimalEntity implements IAnimatable, I
             }
         };
         return flyingpathnavigator;
-    }
+    }*/
 
     @Override
     public boolean canBreatheUnderwater()
@@ -211,6 +222,10 @@ public class DickinsoniaRexEntity extends AnimalEntity implements IAnimatable, I
         return 5;
     }
 
+    @Override
+    public float getWalkTargetValue(BlockPos pos, IWorldReader worldIn) {
+        return worldIn.getFluidState(pos.below()).isEmpty() && worldIn.getFluidState(pos).is(FluidTags.WATER) ? 10.0F : super.getWalkTargetValue(pos, worldIn);
+    }
 
     public static <T extends MobEntity> boolean canDickinsoniaSpawn(EntityType type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random randomIn) {
         ITag<Block> tag = BlockTags.getAllTags().getTag(ToraraTagRegistry.DICKINSONIA_SPAWNS);

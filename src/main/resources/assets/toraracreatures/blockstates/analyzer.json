@@ -1,34 +1,8 @@
 {
   "variants": {
-    "facing=east,on=false": {
-      "model": "toraracreatures:block/analyzer",
-      "y": 90
-    },
-    "facing=east,on=true": {
-      "model": "toraracreatures:block/analyzer_on",
-      "y": 90
-    },
-    "facing=north,on=false": {
-      "model": "toraracreatures:block/analyzer"
-    },
-    "facing=north,on=true": {
-      "model": "toraracreatures:block/analyzer_on"
-    },
-    "facing=south,on=false": {
-      "model": "toraracreatures:block/analyzer",
-      "y": 180
-    },
-    "facing=south,on=true": {
-      "model": "toraracreatures:block/analyzer_on",
-      "y": 180
-    },
-    "facing=west,on=false": {
-      "model": "toraracreatures:block/analyzer",
-      "y": 270
-    },
-    "facing=west,on=true": {
-      "model": "toraracreatures:block/analyzer_on",
-      "y": 270
-    }
+    "facing=north": { "model": "toraracreatures:block/analyzer"},
+    "facing=east": { "model": "toraracreatures:block/analyzer", "y": 90 },
+    "facing=west": { "model": "toraracreatures:block/analyzer", "y": 270 },
+    "facing=south": { "model": "toraracreatures:block/analyzer", "y": 180 }
   }
 }

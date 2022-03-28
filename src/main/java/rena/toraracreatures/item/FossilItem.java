@@ -1,12 +1,12 @@
 package rena.toraracreatures.item;
 
-import net.minecraft.item.Item;
+import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
 
-public class FossilItem extends Item
+public class FossilItem extends BlockItem
 {
 
-    public FossilItem(Properties properties)
-    {
-        super(properties);
+    public FossilItem(Block block, Properties properties) {
+        super(block, properties);
     }
 }

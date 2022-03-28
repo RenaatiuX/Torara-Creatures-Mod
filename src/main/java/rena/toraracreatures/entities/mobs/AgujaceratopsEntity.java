@@ -1,8 +1,10 @@
 package rena.toraracreatures.entities.mobs;
 
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,20 +30,23 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AgujaceratopsEntity extends AnimalEntity implements IAngerable, IAnimatable {
 
     private AnimationFactory factory = new AnimationFactory(this);
-    private static final DataParameter<Integer> DATA_REMAINING_ANGER_TIME = EntityDataManager.defineId(GreenlandSharkEntity.class, DataSerializers.INT);
-    public static final DataParameter<Boolean> ATTACKING = EntityDataManager.defineId(GreenlandSharkEntity.class, DataSerializers.BOOLEAN);
-    public static final DataParameter<Boolean> EAT = EntityDataManager.defineId(GreenlandSharkEntity.class, DataSerializers.BOOLEAN);
+    private static final DataParameter<Integer> DATA_REMAINING_ANGER_TIME = EntityDataManager.defineId(AgujaceratopsEntity.class, DataSerializers.INT);
+    public static final DataParameter<Boolean> ATTACKING = EntityDataManager.defineId(AgujaceratopsEntity.class, DataSerializers.BOOLEAN);
+    public static final DataParameter<Boolean> EAT = EntityDataManager.defineId(AgujaceratopsEntity.class, DataSerializers.BOOLEAN);
     private static final RangedInteger PERSISTENT_ANGER_TIME = TickRangeConverter.rangeOfSeconds(20, 39);
+    private static final UUID SPEED_MODIFIER_ATTACKING_UUID = UUID.fromString("020E0FFB-87AE-4653-9556-501010E291A0");
+    public static final AttributeModifier SPEED_MODIFIER_ATTACKING = new AttributeModifier(SPEED_MODIFIER_ATTACKING_UUID, "Attacking speed boost", 1.0F, AttributeModifier.Operation.MULTIPLY_BASE);
     private UUID persistentAngerTarget;
     private int eatAnimationTick;
     private EatGrassGoal eatBlockGoal;
 
-    protected AgujaceratopsEntity(EntityType<? extends AgujaceratopsEntity> entity, World worldIn) {
+    public AgujaceratopsEntity(EntityType<? extends AgujaceratopsEntity> entity, World worldIn) {
         super(entity, worldIn);
     }
 
@@ -49,9 +54,9 @@ public class AgujaceratopsEntity extends AnimalEntity implements IAngerable, IAn
     protected void registerGoals() {
         super.registerGoals();
         this.eatBlockGoal = new EatGrassGoal(this);
+        this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(0, new AgujaceratopsEntity.ModAttackGoal(this, 1.0D, true));
-        this.goalSelector.addGoal(1, new FindWaterGoal(this));
-        this.goalSelector.addGoal(4, new RandomSwimmingGoal(this, 1.0D, 10));
+        this.goalSelector.addGoal(2, new RandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(5, this.eatBlockGoal);
         this.goalSelector.addGoal(9, new LookAtGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.addGoal(10, new LookRandomlyGoal(this));
@@ -74,6 +79,21 @@ public class AgujaceratopsEntity extends AnimalEntity implements IAngerable, IAn
         }
 
         super.aiStep();
+    }
+
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        ModifiableAttributeInstance modifiableattributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (target == null) {
+            assert modifiableattributeinstance != null;
+            modifiableattributeinstance.removeModifier(SPEED_MODIFIER_ATTACKING);
+        } else {
+            assert modifiableattributeinstance != null;
+            if (!modifiableattributeinstance.hasModifier(SPEED_MODIFIER_ATTACKING)) {
+                modifiableattributeinstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
+            }
+        }
+        super.setTarget(target);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -302,29 +322,30 @@ public class AgujaceratopsEntity extends AnimalEntity implements IAngerable, IAn
         }
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-    {
-        if(this.entityData.get(GreenlandSharkEntity.ATTACKING)){
+    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+        if (this.entityData.get(AgujaceratopsEntity.ATTACKING)) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.attack", true));
             return PlayState.CONTINUE;
         }
-        if(event.isMoving()){
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.walk", true));
+        if (event.isMoving()) {
+            if (Objects.requireNonNull(getAttribute(Attributes.MOVEMENT_SPEED)).hasModifier(AgujaceratopsEntity.SPEED_MODIFIER_ATTACKING)) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.run", true));
+            }else {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.walk", true));
+            }
             return PlayState.CONTINUE;
         }
-        if(isInWater()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.swim", true));
-            return PlayState.CONTINUE;
+            if (isInWater()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.swim", true));
+                return PlayState.CONTINUE;
+            }
+            if (this.entityData.get(AgujaceratopsEntity.EAT)) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.eat", false));
+                return PlayState.CONTINUE;
+            }
+            return PlayState.STOP;
         }
-        if(this.entityData.get(AgujaceratopsEntity.EAT)) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.agujaceratops.eat", false));
-            return PlayState.CONTINUE;
-        }
-        else {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("Swim", true));
-        }
-        return PlayState.CONTINUE;
-    }
+
 
     @Override
     public void registerControllers(AnimationData data) {

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#C",
+    "B "
+  ],
+  "key": {
+    "#": {
+      "item": "toraracreatures:cooked_lamprey"
+    },
+    "C": {
+      "item": "minecraft:carrot"
+    },
+    "B": {
+      "item": "minecraft:bowl"
+    }
+  },
+  "result": {
+    "item": "toraracreatures:lamprey_stew",
+    "count": 1
+  }
+}
