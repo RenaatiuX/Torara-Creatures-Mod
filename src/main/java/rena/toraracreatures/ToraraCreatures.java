@@ -24,6 +24,7 @@ import rena.toraracreatures.client.ClientModEventSubscriber;
 import rena.toraracreatures.config.ConfigHolder;
 import rena.toraracreatures.config.ToraraConfig;
 import rena.toraracreatures.core.init.*;
+import rena.toraracreatures.entities.PheasantEntity;
 import rena.toraracreatures.entities.ToraraSpawnPlacement;
 import rena.toraracreatures.entities.mobs.*;
 import rena.toraracreatures.event.EntityEvent;
@@ -119,6 +120,7 @@ public class ToraraCreatures {
         event.put(EntityInit.LAMPREY, LampreyEntity.createAttributes().build());
         event.put(EntityInit.MANATEE, ManateeEntity.createAttributes().build());
         event.put(EntityInit.CARACAL, CaracalEntity.createAttributes().build());
+        event.put(EntityInit.PHEASANT, PheasantEntity.createAttributes().build());
     }
 
     @SubscribeEvent

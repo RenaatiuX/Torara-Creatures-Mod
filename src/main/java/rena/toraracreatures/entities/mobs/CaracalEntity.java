@@ -19,6 +19,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import rena.toraracreatures.core.init.EntityInit;
+import rena.toraracreatures.core.init.ItemInit;
 import rena.toraracreatures.entities.ia.CaracalAttackingGoal;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -39,7 +40,7 @@ public class CaracalEntity extends TameableEntity implements IAnimatable {
     public static final DataParameter<Boolean> STALK = EntityDataManager.defineId(CaracalEntity.class, DataSerializers.BOOLEAN);
     public static final DataParameter<Boolean> POUNCE = EntityDataManager.defineId(CaracalEntity.class, DataSerializers.BOOLEAN);
 
-    private static final Ingredient FOOD_ITEMS = Ingredient.of(Items.CHICKEN);
+    private static final Ingredient FOOD_ITEMS = Ingredient.of(ItemInit.RAW_GUINEAFOWL.get());
 
     public static final Predicate<LivingEntity> PREY_SELECTOR = entity -> {
         EntityType<?> entitytype = entity.getType();
@@ -151,7 +152,7 @@ public class CaracalEntity extends TameableEntity implements IAnimatable {
         ItemStack itemstack = p_230254_1_.getItemInHand(p_230254_2_);
         Item item = itemstack.getItem();
         if (this.level.isClientSide) {
-            boolean flag = this.isOwnedBy(p_230254_1_) || this.isTame() || item == Items.BONE && !this.isTame();
+                boolean flag = this.isOwnedBy(p_230254_1_) || this.isTame() || item == Items.CHICKEN && !this.isTame();
             return flag ? ActionResultType.CONSUME : ActionResultType.PASS;
         } else {
             if (this.isTame()) {
@@ -173,7 +174,7 @@ public class CaracalEntity extends TameableEntity implements IAnimatable {
                     }
                     return actionresulttype;
 
-            } else if (item == Items.BONE) {
+            } else if (item == Items.CHICKEN) {
                 if (!p_230254_1_.abilities.instabuild) {
                     itemstack.shrink(1);
                 }

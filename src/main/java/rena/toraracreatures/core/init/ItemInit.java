@@ -14,6 +14,7 @@ import rena.toraracreatures.ToraraCreatures;
 import rena.toraracreatures.item.FossilItem;
 import rena.toraracreatures.item.ModSpawnEggItem;
 import rena.toraracreatures.item.TCPainting;
+import rena.toraracreatures.item.egg.PheasantEggItem;
 
 
 public class ItemInit {
@@ -76,7 +77,7 @@ public class ItemInit {
     public static final RegistryObject<Item> COOKED_OSTRICH = ITEMS.register("cooked_ostrich",
             ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(6).saturationMod(0.6f).build()).tab(ToraraCreatures.ITEM_GROUP)));
     public static final RegistryObject<Item> RAW_LAMPREY = ITEMS.register("raw_lamprey",
-            ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(6).saturationMod(0.6f).build()).tab(ToraraCreatures.ITEM_GROUP)));
+            ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(2).saturationMod(0.6f).build()).tab(ToraraCreatures.ITEM_GROUP)));
     public static final RegistryObject<Item> COOKED_LAMPREY = ITEMS.register("cooked_lamprey",
             ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(6).saturationMod(0.6f).build()).tab(ToraraCreatures.ITEM_GROUP)));
     public static final RegistryObject<Item> LAMPREY_STEW = ITEMS.register("lamprey_stew",
@@ -85,6 +86,14 @@ public class ItemInit {
             ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(5).saturationMod(0.3f).build()).tab(ToraraCreatures.ITEM_GROUP)));
     public static final RegistryObject<Item> BASIC_GUACAMOLE = ITEMS.register("basic_guacamole",
             ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(8).saturationMod(0.6f).build()).tab(ToraraCreatures.ITEM_GROUP)));
+    public static final RegistryObject<Item> RAW_GUINEAFOWL = ITEMS.register("raw_guineafowl",
+            ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(2).saturationMod(0.3f).build()).tab(ToraraCreatures.ITEM_GROUP)));
+    public static final RegistryObject<Item> COOKED_GUINEAFOWL = ITEMS.register("cooked_guineafowl",
+            ()-> new Item(new Item.Properties().food(new Food.Builder().nutrition(6).saturationMod(0.6f).build()).tab(ToraraCreatures.ITEM_GROUP)));
+
+    //AnimalEgg
+    public static final RegistryObject<Item> PHEASANT_EGG = ITEMS.register("pheasant_egg",
+            ()-> new PheasantEggItem(new Item.Properties().stacksTo(8).tab(ToraraCreatures.ITEM_GROUP)));
 
     //Block
     public static final RegistryObject<Item> VOLCANIC_ROCK = ITEMS.register("volcanic_rock",
@@ -137,6 +146,8 @@ public class ItemInit {
             ()-> new ModSpawnEggItem(EntityInit.MANATEE, 7624522, 6378329, new Item.Properties().tab(ToraraCreatures.FOSSIL_GROUP)));
     public static final RegistryObject<Item> CARACAL = ITEMS.register("caracal_spawn_egg",
             ()-> new ModSpawnEggItem(EntityInit.CARACAL, 7624522, 6378329, new Item.Properties().tab(ToraraCreatures.FOSSIL_GROUP)));
+    public static final RegistryObject<Item> PHEASANT = ITEMS.register("pheasant_spawn_egg",
+            ()-> new ModSpawnEggItem(EntityInit.PHEASANT, 7624522, 6378329, new Item.Properties().tab(ToraraCreatures.FOSSIL_GROUP)));
 
     //Painting
     public static final RegistryObject<TCPainting> TC_PAINTING = ITEMS.register("painting",

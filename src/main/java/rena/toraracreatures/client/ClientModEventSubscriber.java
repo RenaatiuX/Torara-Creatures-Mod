@@ -1,8 +1,12 @@
 package rena.toraracreatures.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -21,6 +25,8 @@ public class ClientModEventSubscriber {
     @SubscribeEvent
     public static void registerRenderers(final FMLClientSetupEvent event)
     {
+        ItemRenderer itemRendererIn = Minecraft.getInstance().getItemRenderer();
+
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.GREENLAND_SHARK,
                 GreenlandSharkRender::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.DICKINSONIA_REX,
@@ -35,9 +41,16 @@ public class ClientModEventSubscriber {
                 ManateeRender::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.CARACAL,
                 CaracalRender::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.PHEASANT,
+                PheasantRender::new);
+
 
         //Machine
         ScreenManager.register(ContainerInit.ANALYZER_CONTAINER.get(), AnalyzerScreen::new);
+
+        //item
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.PHEASANT_EGG,
+                manager -> new SpriteRenderer<>(manager, itemRendererIn));
 
         //Render
         CutoutRendersTC.renderCutOuts();
