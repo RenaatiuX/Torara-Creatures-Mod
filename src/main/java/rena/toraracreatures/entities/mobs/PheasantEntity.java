@@ -1,4 +1,4 @@
-package rena.toraracreatures.entities;
+package rena.toraracreatures.entities.mobs;
 
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
@@ -7,7 +7,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -38,8 +37,8 @@ public class PheasantEntity extends AnimalEntity implements IAnimatable {
     public static final String EGG_LAY_TIME_TAG = "pheasantEggLayTime";
     public static final String VARIANT_TAG = "pheasantVariant";
 
-    private static final DataParameter<Byte> VARIANT = EntityDataManager.defineId(WolfEntity.class, DataSerializers.BYTE);
-    private static final DataParameter<Byte> ANIMATION  = EntityDataManager.defineId(WolfEntity.class, DataSerializers.BYTE);
+    private static final DataParameter<Byte> VARIANT = EntityDataManager.defineId(PheasantEntity.class, DataSerializers.BYTE);
+    private static final DataParameter<Byte> ANIMATION  = EntityDataManager.defineId(PheasantEntity.class, DataSerializers.BYTE);
     protected static final byte ANIMATION_IDLE = 0;
 
     private static final AnimationBuilder WALK_ANIM = new AnimationBuilder().addAnimation("Pheasant_Walk", true);

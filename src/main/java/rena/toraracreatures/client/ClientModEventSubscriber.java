@@ -43,6 +43,8 @@ public class ClientModEventSubscriber {
                 CaracalRender::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityInit.PHEASANT,
                 PheasantRender::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityInit.LOVE_BIRD,
+                LoveBirdRenderer::new);
 
 
         //Machine

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.util.ResourceLocation;
 import rena.toraracreatures.client.model.PheasantModel;
-import rena.toraracreatures.entities.PheasantEntity;
+import rena.toraracreatures.entities.mobs.PheasantEntity;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 import javax.annotation.Nullable;

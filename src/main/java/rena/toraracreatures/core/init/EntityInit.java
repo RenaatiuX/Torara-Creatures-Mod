@@ -4,11 +4,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.projectile.EggEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import rena.toraracreatures.ToraraCreatures;
-import rena.toraracreatures.entities.PheasantEntity;
+import rena.toraracreatures.entities.mobs.PheasantEntity;
 import rena.toraracreatures.entities.WallFossilEntity;
 import rena.toraracreatures.entities.mobs.*;
 import rena.toraracreatures.item.egg.PheasantEggEntity;
@@ -24,6 +23,7 @@ public class EntityInit {
     public static EntityType<ManateeEntity> MANATEE;
     public static EntityType<CaracalEntity> CARACAL;
     public static EntityType<PheasantEntity> PHEASANT;
+    public static EntityType<LoveBirdEntity> LOVE_BIRD;
 
     public static EntityType<PheasantEggEntity> PHEASANT_EGG;
     public static EntityType<WallFossilEntity> WALL_FOSSIL_ENTITY;
@@ -37,6 +37,7 @@ public class EntityInit {
         MANATEE = register("manatee", EntityType.Builder.of(ManateeEntity::new, EntityClassification.WATER_CREATURE).sized(1.5f, 1.0f));
         CARACAL = register("caracal", EntityType.Builder.of(CaracalEntity::new, EntityClassification.CREATURE).sized(1.5f, 1.0f));
         PHEASANT = register("pheasant", EntityType.Builder.of(PheasantEntity::new, EntityClassification.CREATURE).sized(0.7f, 1.2f));
+        LOVE_BIRD = register("love_bird", EntityType.Builder.of(LoveBirdEntity::new, EntityClassification.AMBIENT));
 
         PHEASANT_EGG = register("pheasant_egg", EntityType.Builder.<PheasantEggEntity>of(PheasantEggEntity::new, EntityClassification.MISC).sized(0.25F, 0.25F).setCustomClientFactory(PheasantEggEntity::new).clientTrackingRange(4).updateInterval(10));
         WALL_FOSSIL_ENTITY = register("wall_fossil_entity", EntityType.Builder.<WallFossilEntity>of(WallFossilEntity::new, EntityClassification.MISC).sized(0.5F, 0.5F).clientTrackingRange(10).updateInterval(Integer.MAX_VALUE));
@@ -49,6 +50,7 @@ public class EntityInit {
                 MANATEE,
                 CARACAL,
                 PHEASANT,
+                LOVE_BIRD,
 
                 PHEASANT_EGG,
                 WALL_FOSSIL_ENTITY

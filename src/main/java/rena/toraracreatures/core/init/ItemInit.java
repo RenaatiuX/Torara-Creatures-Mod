@@ -148,6 +148,8 @@ public class ItemInit {
             ()-> new ModSpawnEggItem(EntityInit.CARACAL, 7624522, 6378329, new Item.Properties().tab(ToraraCreatures.FOSSIL_GROUP)));
     public static final RegistryObject<Item> PHEASANT = ITEMS.register("pheasant_spawn_egg",
             ()-> new ModSpawnEggItem(EntityInit.PHEASANT, 7624522, 6378329, new Item.Properties().tab(ToraraCreatures.FOSSIL_GROUP)));
+    public static final RegistryObject<Item> LOVE_BIRD = ITEMS.register("love_bird_spawn_egg",
+            ()-> new ModSpawnEggItem(EntityInit.LOVE_BIRD, 7624522, 6378329, new Item.Properties().tab(ToraraCreatures.FOSSIL_GROUP)));
 
     //Painting
     public static final RegistryObject<TCPainting> TC_PAINTING = ITEMS.register("painting",

@@ -1,12 +1,11 @@
 package rena.toraracreatures;
 
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.template.TagMatchRuleTest;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -20,11 +19,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import rena.toraracreatures.client.ClientModEventSubscriber;
 import rena.toraracreatures.config.ConfigHolder;
 import rena.toraracreatures.config.ToraraConfig;
 import rena.toraracreatures.core.init.*;
-import rena.toraracreatures.entities.PheasantEntity;
+import rena.toraracreatures.entities.mobs.PheasantEntity;
 import rena.toraracreatures.entities.ToraraSpawnPlacement;
 import rena.toraracreatures.entities.mobs.*;
 import rena.toraracreatures.event.EntityEvent;
@@ -121,6 +119,7 @@ public class ToraraCreatures {
         event.put(EntityInit.MANATEE, ManateeEntity.createAttributes().build());
         event.put(EntityInit.CARACAL, CaracalEntity.createAttributes().build());
         event.put(EntityInit.PHEASANT, PheasantEntity.createAttributes().build());
+        event.put(EntityInit.LOVE_BIRD, LoveBirdEntity.createAttributes().build());
     }
 
     @SubscribeEvent

@@ -2,7 +2,7 @@ package rena.toraracreatures.client.model;
 
 import net.minecraft.util.ResourceLocation;
 import rena.toraracreatures.ToraraCreatures;
-import rena.toraracreatures.entities.PheasantEntity;
+import rena.toraracreatures.entities.mobs.PheasantEntity;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -43,7 +43,5 @@ public class PheasantModel extends AnimatedGeoModel<PheasantEntity> {
         EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
         head.setRotationX(extraData.headPitch * 0.017453292F);
         head.setRotationY(extraData.netHeadYaw * 0.017453292F);
-
-
     }
 }

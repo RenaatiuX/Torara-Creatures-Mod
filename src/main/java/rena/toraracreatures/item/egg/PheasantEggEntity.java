@@ -17,7 +17,7 @@ import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.NetworkHooks;
 import rena.toraracreatures.core.init.EntityInit;
 import rena.toraracreatures.core.init.ItemInit;
-import rena.toraracreatures.entities.PheasantEntity;
+import rena.toraracreatures.entities.mobs.PheasantEntity;
 
 public class PheasantEggEntity extends ProjectileItemEntity {
 
