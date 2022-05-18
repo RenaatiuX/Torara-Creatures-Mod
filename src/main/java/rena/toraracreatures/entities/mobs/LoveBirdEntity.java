@@ -103,18 +103,6 @@ public class LoveBirdEntity extends AnimalEntity implements IFlyingAnimal, IAnim
     }
 
     //VARIANTS
-    /*public LoveBirdVariant getVariant() {
-        return LoveBirdVariant.byId(this.getTypeVariant() & 255);
-    }
-
-    private int getTypeVariant() {
-        return this.entityData.get(DATA_VARIANT_ID);
-    }
-
-    private void setVariant(LoveBirdVariant variant) {
-        this.entityData.set(DATA_VARIANT_ID, variant.getId() & 255);
-    }*/
-
     private void setTypeVariant(int p_234242_1_) {
         this.entityData.set(DATA_VARIANT_ID, p_234242_1_);
     }
