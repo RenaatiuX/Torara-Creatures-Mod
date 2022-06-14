@@ -16,6 +16,9 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.FlyingPathNavigator;
 import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.util.Util;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import rena.toraracreatures.entities.enums.LoveBirdVariant;
@@ -99,20 +102,27 @@ public class LoveBirdEntity extends AnimalEntity implements IFlyingAnimal, IAnim
     @Override
     public void readAdditionalSaveData(CompoundNBT p_70037_1_) {
         super.readAdditionalSaveData(p_70037_1_);
-        this.setTypeVariant(p_70037_1_.getInt("Variant"));
+        this.entityData.set(DATA_VARIANT_ID, p_70037_1_.getInt("Variant"));
     }
 
     //VARIANTS
-    private void setTypeVariant(int p_234242_1_) {
-        this.entityData.set(DATA_VARIANT_ID, p_234242_1_);
+    public LoveBirdVariant getVariant() {
+        return LoveBirdVariant.byId(this.getTypeVariant() & 255);
     }
 
     private int getTypeVariant() {
         return this.entityData.get(DATA_VARIANT_ID);
     }
 
-    public LoveBirdVariant getVariant() {
-        return LoveBirdVariant.byId(this.getTypeVariant() & 255);
+    private void setVariant(LoveBirdVariant variant) {
+        this.entityData.set(DATA_VARIANT_ID, variant.getId() & 255);
+    }
+
+    @Override
+    public ILivingEntityData finalizeSpawn(IServerWorld p_213386_1_, DifficultyInstance p_213386_2_, SpawnReason p_213386_3_, @Nullable ILivingEntityData p_213386_4_, @Nullable CompoundNBT p_213386_5_) {
+        LoveBirdVariant variant = Util.getRandom(LoveBirdVariant.values(), this.random);
+        this.setVariant(variant);
+        return super.finalizeSpawn(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
